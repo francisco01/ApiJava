@@ -1,7 +1,6 @@
 package br.com.exemplo.angular.pessoaservice.model;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -35,11 +34,6 @@ public class Tarefa {
 	@JoinColumn(name = "id_pessoa")
 	private Pessoa pessoa;
 	
-	@JsonProperty("pessoa_id")
-	private void teste(Integer pessoa_id) {
-		this.pessoa = new Pessoa();
-		pessoa.setCodigo(pessoa_id);
-	}
 	
 	public Integer getCodigo() {
 		return codigo;

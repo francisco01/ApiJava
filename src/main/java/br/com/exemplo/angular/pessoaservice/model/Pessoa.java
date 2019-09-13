@@ -22,12 +22,21 @@ public class Pessoa {
 	@GeneratedValue(strategy= GenerationType.IDENTITY)
 	@Column(name="id_pessoa")
 	private Integer codigo;
-	private String nome;
-	private boolean ativo;
+	private String userName;
+	private String senha;
 	@JsonManagedReference
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "pessoa", fetch = FetchType.LAZY)
 	private List<Tarefa> tarefas;
 	
+	public Pessoa() {
+		
+	}
+	
+	public Pessoa(String userName, String senha) {
+		this.userName = userName;
+		this.senha = senha;
+	}
+
 	public Integer getCodigo() {
 		return codigo;
 	}
@@ -36,20 +45,20 @@ public class Pessoa {
 		this.codigo = codigo;
 	}
 
-	public String getNome() {
-		return nome;
+	public String getUserName() {
+		return userName;
 	}
 
-	public void setNome(String nome) {
-		this.nome = nome;
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
-	public boolean isAtivo() {
-		return ativo;
+	public String getSenha() {
+		return senha;
 	}
 
-	public void setAtivo(boolean ativo) {
-		this.ativo = ativo;
+	public void setSenha(String senha) {
+		this.senha = senha;
 	}
 
 	public List<Tarefa> getTarefas() {
@@ -60,8 +69,6 @@ public class Pessoa {
 		this.tarefas = tarefas;
 	}
 
-	
-	
 	
 
 }

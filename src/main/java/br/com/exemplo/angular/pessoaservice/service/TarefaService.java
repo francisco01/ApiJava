@@ -16,49 +16,57 @@ import br.com.exemplo.angular.pessoaservice.model.Response;
 import br.com.exemplo.angular.pessoaservice.model.Tarefa;
 import br.com.exemplo.angular.pessoaservice.repository.TarefaRepository;
 
-@CrossOrigin(origins  = "http://localhost:4200")
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/service")
 public class TarefaService {
-	
+
 	@Autowired
 	private TarefaRepository tarefaRepository;
-	
-	//@Autowired
-	//private PessoaRepository pessoaRepository;
-	
-	@RequestMapping(value="/tarefa", method= RequestMethod.POST, 
-			consumes=MediaType.APPLICATION_JSON_UTF8_VALUE, 
-			produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+
+	// @Autowired
+	// private PessoaRepository pessoaRepository;
+
+	@RequestMapping(value = "/tarefa", method = RequestMethod.POST, 
+			consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public @ResponseBody Response salvar(@RequestBody Tarefa tarefa) {
-		
-		try {
-			this.tarefaRepository.save(tarefa);
-			return new Response (1, "Tarefa salva com sucesso");
-		}catch(Exception e) {
-			return new Response (0, e.getMessage());
+		if (tarefa.getDtInicio() == null) {
+			return new Response(0, "A data de inicio não foi informada");
+		} else if (tarefa.getDtTermino().isBefore(tarefa.getDtInicio())) {
+			return new Response(0, "A data de Termino não pode ser anterior a data de inicio");
 		}
-		
+
+		else {
+			try {
+				this.tarefaRepository.save(tarefa);
+				return new Response(1, "Tarefa salva com sucesso");
+
+			} catch (Exception e) {
+				return new Response(0, e.getMessage());
+			}
+		}
+
 	}
-	
+
 //	@RequestMapping(value="/tarefa", method = RequestMethod.GET, 
 //			produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
 //	public @ResponseBody List<Tarefa> consultar(){
 //		return this.tarefaRepository.findAll();
 //	}
-	
-	@RequestMapping(value="/tarefa/{codigo}", method = RequestMethod.GET, 
-			produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody List<Tarefa> consultar( @PathVariable("codigo") Integer codigo ){
-		//System.out.println("codigo: " + codigo);
+
+	@RequestMapping(value = "/tarefa/{codigo}", method = RequestMethod.GET, 
+			produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public @ResponseBody List<Tarefa> consultar(@PathVariable("codigo") Integer codigo) {
+		// System.out.println("codigo: " + codigo);
 		return this.tarefaRepository.findByPessoa(codigo);
 	}
-	
-	@RequestMapping(value="/tarefa/editar/{codigo}", method = RequestMethod.GET, 
-			produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+
+	@RequestMapping(value = "/tarefaAtualizar/{codigo}", method = RequestMethod.GET, 
+			produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public Tarefa buscar(@PathVariable("codigo") Integer codigo) {
+		System.out.println("codigo: " + codigo);
 		return this.tarefaRepository.findByCodigo(codigo);
-		
+
 	}
 //	
 //	@RequestMapping(value="/tarefa/{codigo}", method = RequestMethod.GET, 
@@ -67,34 +75,42 @@ public class TarefaService {
 //		return this.tarefaRepository.findByCodigo(codigo);
 //		
 //	}
-	
-	@RequestMapping(value="/tarefa", method= RequestMethod.PUT, 
-			consumes=MediaType.APPLICATION_JSON_UTF8_VALUE)
+
+	@RequestMapping(value = "/tarefa", method = RequestMethod.PUT, 
+			consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public @ResponseBody Response atualizar(@RequestBody Tarefa tarefa) {
-		try {
-			this.tarefaRepository.save(tarefa);
-			return new Response(1, "Registro atualizado com sucesso!");
-		}catch(Exception e) {
-			return new Response(0, e.getMessage());
+		
+		if (tarefa.getDtInicio() == null) {
+			return new Response(0, "A data de inicio não foi informada");
+		} else if (tarefa.getDtTermino().isBefore(tarefa.getDtInicio())) {
+			return new Response(0, "A data de Termino não pode ser anterior a data de inicio");
+		}
+
+		else {
+			try {
+				this.tarefaRepository.save(tarefa);
+				return new Response(1, "Registro atualizado com sucesso!");
+			} catch (Exception e) {
+				return new Response(0, e.getMessage());
+			}
 		}
 	}
-	
-	@RequestMapping(value="/tarefa/{codigo}", method = RequestMethod.DELETE, 
-			produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody Response excluir(@PathVariable("codigo") Integer codigo){
- 
+
+	@RequestMapping(value = "/tarefa/{codigo}", method = RequestMethod.DELETE, 
+			produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public @ResponseBody Response excluir(@PathVariable("codigo") Integer codigo) {
+
 		Tarefa tarefa = tarefaRepository.findByCodigo(codigo);
- 
+
 		try {
- 
+
 			tarefaRepository.delete(tarefa);
- 
+
 			return new Response(1, "Registro excluido com sucesso!");
- 
-		}catch(Exception e) {
+
+		} catch (Exception e) {
 			return new Response(0, e.getMessage());
 		}
 	}
-	
 
 }
